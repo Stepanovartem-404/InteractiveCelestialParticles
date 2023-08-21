@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Particle Animation</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background-color: #000;
+    }
+  </style>
+</head>
+<body>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+  <script>
+    let particles = [];
+
+    function setup() {
+      createCanvas(windowWidth, windowHeight);
+    }
+
+    function draw() {
+      background(0);
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        particles[i].update();
+        particles[i].display();
+
+        if (particles[i].isFinished()) {
+          particles.splice(i, 1);
+        }
+      }
+    }
+
+    function mousePressed() {
+      let p = new Particle(mouseX, mouseY);
+      particles.push(p);
+    }
+
+    class Particle {
+      constructor(x, y) {
+        this.pos = createVector(x, y);
+        this.vel = createVector(random(-2, 2), random(-2, 2));
+        this.acc = createVector(0, 0);
+        this.lifespan = 255;
+      }
+
+      update() {
+        this.vel.add(this.acc);
+        this.pos.add(this.vel);
+        this.acc.mult(0);
+        this.lifespan -= 2;
+      }
+
+      display() {
+        stroke(255, this.lifespan);
+        fill(255, this.lifespan);
+        ellipse(this.pos.x, this.pos.y, 12, 12);
+      }
+
+      applyForce(force) {
+        this.acc.add(force);
+      }
+
+      isFinished() {
+        return this.lifespan <= 0;
+      }
+    }
+  </script>
+</body>
+</html>
